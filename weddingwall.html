@@ -118,11 +118,15 @@ addEvent(document.body, 'keypress', function(e) {
 // ,'这一条是默认的！'
 // ,'这一条也是！'];
 
+var color = [
+  '#6f9','#f00', '#b8860b', '#ff0', '#000', '#fff', '#3a5', '#b8860b'
+]
+
 var i = 0;
 
 
 
-console.log('尝试websocket和swoole的配合');
+console.log('发起websocket连接...');
 
 var ws = new WebSocket("ws://120.79.41.98:1997");//一定要以ws://开头 ，端口是否可用(试验中可以直接关闭防火墙centos7用 systemctl stop firewalld.service ；7以下的用service iptables stop )
 
@@ -130,9 +134,9 @@ var ws = new WebSocket("ws://120.79.41.98:1997");//一定要以ws://开头 ，�
 
        console.log("握手成功");
 
-        ws.send('hello world!!!');//向php服务器发送数据
+        // ws.send('hello world!!!');//向php服务器发送数据
         var demoInterval = setInterval(function() {
-              if (i++ < 999999) {
+              if (i++ < 20) {
                   send('test')
               } else {
                   clearInterval(demoInterval);
@@ -141,7 +145,10 @@ var ws = new WebSocket("ws://120.79.41.98:1997");//一定要以ws://开头 ，�
    };
 
    ws.onmessage = function (e) {
-      damoo.emit({text:e.data, color: '#f00', shadow: { color: '#6f9' }});
+      var colorIndex = Math.floor(Math.random() * 8);
+      var shadowIndex = Math.floor(Math.random() * 8);
+      if(shadowIndex == colorIndex) shadowIndex = true;
+      damoo.emit({text:e.data, color: color[colorIndex], shadow: shadowIndex == true? true : { color: color[shadowIndex] }});
    };
 
    ws.onerror = function () {
